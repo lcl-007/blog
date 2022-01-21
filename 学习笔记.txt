@@ -1,0 +1,66 @@
+创建项目流程：1.项目所需功能板块图。2.创建模型同时生成迁移文件.3.创建控制器、路由
+
+JWT看守器
+
+返回值去除data包裹：composer里搜索liyu/dingo-serializer-switch组件 启用即可
+
+迁移文件增加is_locked字段：php artisan make:migration add_is_locked_to_users_table --table=users
+
+写helpers文件时要在composer里的"autoload":{"files":["helpers.php"]}注册，并且composer dump-autoload更新才可以使用
+
+开启事件观察者：php artisan make:observer CategoryObserver --model=Category 然后在AppServiceProvider里面的boot写上关联模型事件
+
+强制类型转换：protected $casts = [
+        'pics'=>'array',
+    ];
+举例：
+public function user( )
+    {
+        //belongsto里面的参数（关联模型，外键，主键，关系）
+        return $this->belongsTo(User::class,'user_id','id');
+    }
+//模型注入User 必须把路由里的binding注册到Kernel里面，才能return到User里的数据
+public function user(User $user)
+    {
+       
+        return $user;
+    }
+
+Transformer里面让用户可以选择额外的数据：
+protected $availableIncludes = ['category','user','comments'];
+public function includeCategory(Good $good)
+{
+    return $this->item($good->category,new CategoryTransformer());
+}
+
+相关功能网址：
+https://www.kuangstudy.com/bbs/1480186823543570434                 狂神的redis学习网站
+https://blog.csdn.net/HDFQQ188816190/article/details/77561442    github命令
+https://blog.csdn.net/tangxiaolang101/article/details/52805219       虚拟机搭建
+https://www.cnblogs.com/hjcan/p/11551216.html                             工厂模式的随机数据填充
+https://learnku.com/articles/17883                                                     JWT文档
+https://learnku.com/docs/laravel/8.5/eloquent-mutators/10412       属性修改器
+https://learnku.com/laravel/wikis/25704                                             laravel文档
+https://learnku.com/docs/dingo-api/2.0.0/Authentication/1449#replies    dingo-api
+https://packagist.org/packages/overtrue/easy-sms                           开通短信服务的第三方插件
+http://z-sms.com/                                                                               临时短信号网址
+http://www.kdniao.com/UserCenter/v4/Memberships.aspx               快递鸟订单查询
+http://z-sms.com/sms-receive-free.php?pho_num=19815151534&1
+http://placeimg.com/640/480/any                                                       随机图片网址
+https://packagist.org/packages/yansongda/laravel-pay                     支付宝支付功能
+https://packagist.org/packages/spatie/laravel-permission                 权限分配
+未解决项目问题：
+1.手机发送短信功能写完 但没开通 必须使用商户
+2.订单过期的方法没有配置好 Windows系统的计划任务
+3.缺少城市的数据表
+4.支付宝沙箱支付测试：公钥模式或者证书模式都没配置明白
+
+配置homestead开发环境
+https://blog.csdn.net/tangxiaolang101/article/details/52805219 
+
+配置homestead多站点生效：
+1.配置完Homestead.yaml、hosts。
+2.在root状态下 进入/etc/nginx/sites-enabled/api.test(自己配置的第一个站点)
+3.复制api.test 更改里面关于api.test的数据 保存之后exit出来 使用vagrant reload --provision 。再次登录浏览器站点即可。
+
+更改homestead的PHP版本：root@homestead:~# update-alternatives --config php
